@@ -1,0 +1,1 @@
+target_sources(MVRE_Sample PUBLIC test_scene.cpp)
