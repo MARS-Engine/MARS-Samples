@@ -5,7 +5,7 @@
 #include <MVRE/components/camera_updater.hpp>
 
 using namespace mvre_engine;
-
+using namespace mvre_3d;
 void test_scene::load() {
     auto obj = new engine_object();
     obj->add_component<mesh_renderer>();
