@@ -2,6 +2,7 @@
 #include "MVRE/executioner/executioner.hpp"
 #include "MVRE/engine/engine_handler.hpp"
 #include <MVRE/graphics/backend/opengl/gl_backend_instance.hpp>
+#include <MVRE/graphics/backend/vulkan/v_backend_instance.hpp>
 #include <MVRE/math/vector4.hpp>
 #include "scenes/test_scene.hpp"
 #include <MVRE/scenes/scene_manager.hpp>
@@ -25,8 +26,9 @@ int main() {
     engine.add_layer<update_layer>(update_layer_callback);
     engine.add_layer<render_layer>(render_layer_callback);
 
-    auto gl_instance = new gl_backend_instance(true);
-    auto instance = graphics_instance(gl_instance);
+    auto g_instance = new gl_backend_instance(true);
+    //auto g_instance = new v_backend_instance(true);
+    auto instance = graphics_instance(g_instance);
     instance.create_with_window("MVRE", vector2(1920, 1080));
 
     auto new_scene = test_scene(&instance, &engine);
