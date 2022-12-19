@@ -8,6 +8,7 @@
 #include <MVRE/scenes/scene_manager.hpp>
 #include <MVRE/time/time_helper.hpp>
 #include <MVRE/engine/layers/main_layers.hpp>
+#include <MVRE/graphics/pipeline_manager.hpp>
 
 using namespace mvre_graphics;
 using namespace mvre_math;
@@ -26,8 +27,8 @@ int main() {
     engine.add_layer<update_layer>(update_layer_callback);
     engine.add_layer<render_layer>(render_layer_callback);
 
-    auto g_instance = new gl_backend_instance(true);
-    //auto g_instance = new v_backend_instance(true);
+    //auto g_instance = new gl_backend_instance(true);
+    auto g_instance = new v_backend_instance(true);
     auto instance = graphics_instance(g_instance);
     instance.create_with_window("MVRE", vector2(1920, 1080));
 
@@ -56,6 +57,7 @@ int main() {
     executioner::stop();
     mvre_resources::resource_manager::clean();
     engine.clean();
+    pipeline_manager::destroy();
     executioner::clean();
     instance.destroy();
     return 0;
