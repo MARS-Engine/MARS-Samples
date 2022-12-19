@@ -27,8 +27,8 @@ int main() {
     engine.add_layer<update_layer>(update_layer_callback);
     engine.add_layer<render_layer>(render_layer_callback);
 
-    //auto g_instance = new gl_backend_instance(true);
-    auto g_instance = new v_backend_instance(true);
+    auto g_instance = new gl_backend_instance(true);
+    //auto g_instance = new v_backend_instance(true);
     auto instance = graphics_instance(g_instance);
     instance.create_with_window("MVRE", vector2(1920, 1080));
 

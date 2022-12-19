@@ -8,15 +8,15 @@ using namespace mvre_engine;
 using namespace mvre_3d;
 void test_scene::load() {
     auto obj = new engine_object();
+
     obj->transform()->set_position({ -2, 0, 2});
-    obj->add_component<mesh_renderer>();
+
+    auto renderer = obj->add_component<mesh_renderer>();
+
+    renderer->set_mesh_path("engine/assets/mesh/monkey.obj");
+    renderer->set_material("engine/assets/materials/mesh.mat");
+
     obj->add_component<mvre_component::camera_updater>();
-
-    m_engine->instance(obj, m_instance, nullptr);
-
-    obj = new engine_object();
-    obj->transform()->set_position({ 2, 0, 2});
-    obj->add_component<mesh_renderer>();
 
     m_engine->instance(obj, m_instance, nullptr);
 }

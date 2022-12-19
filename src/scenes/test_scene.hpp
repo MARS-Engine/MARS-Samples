@@ -1,5 +1,5 @@
-#ifndef __TEST__SCENE__
-#define __TEST__SCENE__
+#ifndef TEST_SCENE_
+#define TEST_SCENE_
 
 #include "MVRE/scenes/scene.hpp"
 
