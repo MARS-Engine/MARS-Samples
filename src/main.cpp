@@ -9,6 +9,8 @@
 #include <MVRE/time/time_helper.hpp>
 #include <MVRE/engine/layers/main_layers.hpp>
 #include <MVRE/graphics/pipeline_manager.hpp>
+#include <MVRE/engine/tick.hpp>
+#include <MVRE/input/input_manager.hpp>
 
 using namespace mvre_graphics;
 using namespace mvre_math;
@@ -30,6 +32,7 @@ int main() {
     auto g_instance = new gl_backend_instance(true);
     //auto g_instance = new v_backend_instance(true);
     auto instance = graphics_instance(g_instance);
+
     instance.create_with_window("MVRE", vector2(1920, 1080));
 
     auto new_scene = test_scene(&instance, &engine);
@@ -40,14 +43,26 @@ int main() {
 
     engine.process_layer<load_layer>();
 
+    tick update_tick(120);
+    tick input_tick(240);
+
     while (instance.is_running()) {
         time_helper::perpare();
-        ///Update
-        instance.update();
-        engine.process_layer<update_layer>();
+        instance.prepare_render();
+
+        if (input_tick.tick_ready()) {
+            instance.window_update();
+            input_tick.reset();
+        }
+
+        if (update_tick.tick_ready()) {
+            instance.update();
+            engine.process_layer<update_layer>();
+            instance.finish_update();
+            update_tick.reset();
+        }
 
         ///render
-        instance.prepare_render();
         engine.process_layer<render_layer>();
         executioner::execute();
         instance.draw();
@@ -59,6 +74,7 @@ int main() {
     engine.clean();
     pipeline_manager::destroy();
     executioner::clean();
+    mvre_input::input_manager::clean();
     instance.destroy();
     return 0;
 }

@@ -1,0 +1,1 @@
+target_sources(MVRE_Sample PUBLIC camera_controller.cpp)
