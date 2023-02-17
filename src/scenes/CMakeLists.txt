@@ -1,1 +1,1 @@
-target_sources(MVRE_Sample PUBLIC test_scene.cpp)
+target_sources(MMine PUBLIC test_scene.cpp)

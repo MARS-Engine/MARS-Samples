@@ -1,4 +1,4 @@
-# MVRE Sample
-Samples of MVRE engine
+# MARS Sample
+Samples of MARS engine
 
-Note: Because MVRE is in alpha this will change a lot
+Note: Because MARS is in alpha this will change a lot

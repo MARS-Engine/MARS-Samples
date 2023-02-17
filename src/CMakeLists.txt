@@ -1,2 +1,2 @@
-add_subdirectory(scenes)
 add_subdirectory(components)
+add_subdirectory(scenes)

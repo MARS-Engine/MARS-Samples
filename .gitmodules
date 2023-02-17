@@ -1,3 +1,12 @@
+[submodule "MARS"]
+	path = MARS
+	url = https://github.com/MARS-Engine/MARS.git
+[submodule "MARS_3D"]
+	path = MARS_3D
+	url = https://github.com/MARS-Engine/MARS-3D.git
+[submodule "MPE"]
+	path = MPE
+	url = https://github.com/MARS-Engine/MPE.git
 [submodule "MVRE"]
 	path = MVRE
 	url = https://github.com/MVREngine/MVRE
