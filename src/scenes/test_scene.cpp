@@ -4,6 +4,7 @@
 #include <MARS/components/camera_updater.hpp>
 #include <MARS/graphics/light_manager.hpp>
 #include <MPE/rigid_body.hpp>
+#include <MPE/colliders/AABB.hpp>
 #include "../components/camera_controller.hpp"
 
 using namespace mars_engine;
@@ -33,15 +34,15 @@ void test_scene::load() {
         .Radius = (-linear +  (float)std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0 / 5.0) * lightMax))) / (2 * quadratic)
     });
 
-    m_instance->backend()->lights()->add_light(n_light);
-    m_instance->backend()->lights()->add_light(n_light_2);
+    m_graphics->backend()->lights()->add_light(n_light);
+    m_graphics->backend()->lights()->add_light(n_light_2);
 
     //others
     auto obj = new engine_object();
     obj->add_component<mars_component::camera_updater>();
     obj->add_component<camera_controller>();
 
-    m_engine->instance(obj, m_instance, nullptr);
+    m_engine->spawn(obj, m_graphics, nullptr);
 
     obj = new engine_object();
 
@@ -53,7 +54,12 @@ void test_scene::load() {
     renderer->set_mesh_path("engine/assets/mesh/monkey.obj");
     renderer->set_material("engine/assets/materials/mesh.mat");
 
-    m_engine->instance(obj, m_instance, nullptr);
+    mars_loader::wavefront_mesh* mesh;
+
+    m_engine->resources()->load_resource("engine/assets/mesh/monkey.obj", mesh);
+    obj->add_component<mpe::AABB>()->load_from_mesh(mesh);
+
+    m_engine->spawn(obj, m_graphics, nullptr);
 
     auto ground = new engine_object();
 
@@ -65,7 +71,40 @@ void test_scene::load() {
     renderer->set_mesh_path("engine/assets/mesh/cube.obj");
     renderer->set_material("engine/assets/materials/uv_mesh.mat");
 
-    m_engine->instance(ground, m_instance, nullptr);
+    m_engine->resources()->load_resource("engine/assets/mesh/cube.obj", mesh);
+    ground->add_component<mpe::AABB>()->load_from_mesh(mesh);
+
+    m_engine->spawn(ground, m_graphics, nullptr);
+
+    //auto cube = new engine_object();
+//
+    //cube->transform().set_position({ 2, 2, 2});
+//
+    //renderer = cube->add_component<mesh_renderer>();
+    //cube->add_component<mpe::rigid_body>();
+//
+    //renderer->set_mesh_path("engine/assets/mesh/cube.obj");
+    //renderer->set_material("engine/assets/materials/uv_mesh.mat");
+//
+    //mars_resources::resource_manager::load_resource("engine/assets/mesh/cube.obj", mesh);
+    //cube->add_component<mpe::AABB>()->load_from_mesh(mesh);
+//
+    //m_engine->instance(cube, m_instance, nullptr);
+//
+    //cube = new engine_object();
+//
+    //cube->transform().set_position({ 2.5, 5, 2});
+//
+    //renderer = cube->add_component<mesh_renderer>();
+    //cube->add_component<mpe::rigid_body>();
+//
+    //renderer->set_mesh_path("engine/assets/mesh/cube.obj");
+    //renderer->set_material("engine/assets/materials/uv_mesh.mat");
+//
+    //mars_resources::resource_manager::load_resource("engine/assets/mesh/cube.obj", mesh);
+    //cube->add_component<mpe::AABB>()->load_from_mesh(mesh);
+
+    //m_engine->instance(cube, m_instance, nullptr);
 
     //for (auto x = 0; x < 5; x++) {
     //    for (auto y = 0; y < 5; y++) {

@@ -1,7 +1,7 @@
-#include "MARS/graphics/graphics_instance.hpp"
+#include "MARS/graphics/graphics_engine.hpp"
 #include "MARS/executioner/executioner.hpp"
 #include "MARS/engine/engine_handler.hpp"
-#include <MARS/graphics/backend/vulkan/v_backend_instance.hpp>
+#include <MARS/graphics/backend/vulkan/vulkan_backend.hpp>
 #include <MARS/math/vector4.hpp>
 #include "scenes/test_scene.hpp"
 #include <MARS/scenes/scene_manager.hpp>
@@ -37,9 +37,12 @@ public:
 };
 
 int main() {
+    auto resources = mars_resources::resource_manager();
+
     executioner::init();
 
     engine_handler engine = engine_handler();
+    engine.set_resources(&resources);
     engine.init();
 
     engine.add_layer<load_layer>(load_layer_callback);
@@ -49,13 +52,14 @@ int main() {
     engine.add_layer<render_layer>(render_layer_callback);
     engine.add_layer<mpe::mpe_layer>(mpe::mpe_update_layer_callback);
 
-    auto g_instance = new v_backend_instance(true);
+    auto v_graphics = vulkan_backend(true);
+    v_graphics.set_resources(&resources);
 
-    auto instance = graphics_instance(g_instance);
+    auto graphics = graphics_engine(&v_graphics);
 
-    instance.create_with_window("MARS", vector2<size_t>(1920, 1080), "deferred.mr");
+    graphics.create_with_window("MARS", vector2<size_t>(1920, 1080), "deferred.mr");
 
-    auto new_scene = test_scene(&instance, &engine);
+    auto new_scene = test_scene(&graphics, &engine);
 
     scene_manager::add_scene("test", &new_scene);
 
@@ -75,33 +79,33 @@ int main() {
 
     bool waiting_render_finish = false;
 
-    while (instance.is_running()) {
+    while (graphics.is_running()) {
         if (input_tick.tick_ready()) {
-            instance.window_update();
+            graphics.window_update();
             input_tick.reset();
         }
 
         if (update_tick.tick_ready()) {
             update_time.start();
-            instance.update();
+            graphics.update();
             engine.lock();
             engine.process_layer<mpe::mpe_layer>();
             engine.process_layer<update_layer>();
             engine.process_layer<post_update_layer>();
             engine.unlock();
-            instance.finish_update();
+            graphics.finish_update();
             update_tick.reset();
             update_time.end();
         }
 
         if (executioner::finished()) {
             if (waiting_render_finish) {
-                instance.draw();
+                graphics.draw();
                 render_time.start();
             }
 
             waiting_render_finish = true;
-            instance.prepare_render();
+            graphics.prepare_render();
             engine.lock();
             engine.process_layer<render_layer>();
             engine.process_layer<post_render_layer>();
@@ -110,27 +114,25 @@ int main() {
             render_time.end();
         }
 
-        //if (fps_tick.tick_ready()) {
-        //    update_time.print("update - ");
-        //    render_time.print("render - ");
-        //    fps_tick.reset();
-        //}
-
-        //For some reason putting the render layer in its own thread to be constantly running is 1/3 slower, more research needed
+        if (fps_tick.tick_ready()) {
+            update_time.print("update - ");
+            render_time.print("render - ");
+            fps_tick.reset();
+        }
     }
 
     executioner::stop();
 
     while (!executioner::finished()) { }
 
-    instance.wait_idle();
+    graphics.wait_idle();
 
-    mars_resources::resource_manager::clean();
+    resources.clean();
     engine.clean();
     pipeline_manager::destroy();
     executioner::clean();
     mars_input::input_manager::clean();
-    instance.destroy();
+    graphics.destroy();
 
     return 0;
 }
