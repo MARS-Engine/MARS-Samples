@@ -20,6 +20,8 @@ using namespace mars_layers;
 
 class time_calc {
 private:
+    size_t total = 0;
+    float average = 0.0f;
     std::chrono::_V2::system_clock::time_point m_start;
     std::chrono::_V2::system_clock::time_point m_end;
 public:
@@ -32,6 +34,9 @@ public:
     }
 
     void print(const std::string& _prefix) {
+        //total++;
+        //average += std::chrono::duration<float, std::chrono::seconds::period>(m_end - m_start).count();
+        //printf("average %f\n", average / total);
         printf("%s%f\n", _prefix.c_str(), std::chrono::duration<float, std::chrono::seconds::period>(m_end - m_start).count());
     }
 };
@@ -69,6 +74,10 @@ int main() {
 
     engine.process_layer<load_layer>();
 
+    //avg           - 0.000090
+    //avg op        - 0.000067
+    //avg new       - 0.000087
+    //ang new op    - 0.000061
     //update tick rate must be way higher than refresh rate, or it feels like it feels like its lagging
     tick update_tick(std::numeric_limits<float>::max());
     tick input_tick(240);
