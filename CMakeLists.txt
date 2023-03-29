@@ -13,5 +13,4 @@ add_executable(MMine src/main.cpp)
 
 add_subdirectory(src)
 
-target_link_libraries(MMine parallel)
 target_link_libraries(MMine MARS)
