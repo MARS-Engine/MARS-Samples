@@ -38,13 +38,13 @@ void test_scene::load() {
     m_graphics->backend()->lights()->add_light(n_light_2);
 
     //others
-    auto obj = std::make_shared<mars_object>(m_engine);
+    mars_object obj = create_object(m_engine);
     obj->add_component<mars_component::camera_updater>();
     obj->add_component<camera_controller>();
 
     m_engine->spawn(obj, m_graphics);
 
-    obj = std::make_shared<mars_object>(m_engine);
+    obj = create_object(m_engine);
 
     obj->transform().set_position({ -2, 20, 2});
     obj->add_component<mpe::rigid_body>();
@@ -61,7 +61,7 @@ void test_scene::load() {
 
     m_engine->spawn(obj, m_graphics);
 
-    auto ground = std::make_shared<mars_object>(m_engine);
+    auto ground = create_object(m_engine);
 
     ground->transform().set_position({ 0, -2, 0});
     ground->transform().set_scale({ 10, 0.5, 10});

@@ -36,9 +36,9 @@ public:
 };
 
 int main() {
-    auto resources = std::make_shared<mars_resources::resource_manager>();
+    mars_resources::resource_manager resources = mars_resources::create_resource_manager();
 
-    auto engine = std::make_shared<object_engine>();
+    object_engine engine = create_engine();
     engine->set_resources(resources);
 
     auto update_worker = engine->create_worker(std::thread::hardware_concurrency() / 2);
@@ -52,9 +52,9 @@ int main() {
     engine->add_layer<mpe::mpe_layer>(mpe::mpe_update_layer_callback);
 
     auto v_graphics = vulkan_backend(false);
-    v_graphics.set_resources(resources.get());
+    v_graphics.set_resources(resources);
 
-    auto graphics = std::make_shared<graphics_engine>(&v_graphics, 1);
+    auto graphics = create_graphics_engine(&v_graphics, 1);
     v_graphics.set_graphics(graphics);
     graphics->create_with_window("MARS", vector2<size_t>(1920, 1080), "deferred.mr");
 
@@ -71,7 +71,6 @@ int main() {
     //update tick rate must be way higher than refresh rate, or it feels like it feels like its lagging
     tick_rate update_tick(480);
     tick_rate input_tick(240);
-    tick_rate fps_tick(2);
 
     time_calc update_time;
     time_calc render_time;
@@ -105,12 +104,6 @@ int main() {
             update_tick.reset();
             update_time.end();
         }
-
-        if (fps_tick.tick_ready()) {
-           //update_time.print("update - ");
-           //render_time.print("render - ");
-           fps_tick.reset();
-        }
     }
 
     graphics->wait_idle();
@@ -123,7 +116,7 @@ int main() {
     thread.join();
 
     resources->clean();
-    //engine.clean();
+    engine->clean();
     pipeline_manager::destroy();
     mars_input::input_manager::clean();
     graphics->destroy();
