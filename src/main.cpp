@@ -51,7 +51,7 @@ int main() {
     engine->add_layer<update_gpu>(update_gpu_callback);
     engine->add_layer<mpe::mpe_layer>(mpe::mpe_update_layer_callback);
 
-    auto v_graphics = vulkan_backend(false);
+    auto v_graphics = vulkan_backend(true);
     v_graphics.set_resources(resources);
 
     auto graphics = create_graphics_engine(&v_graphics, 1);
@@ -105,8 +105,6 @@ int main() {
             update_time.end();
         }
     }
-
-    graphics->wait_idle();
 
     update_worker->close();
     render_worker->close();

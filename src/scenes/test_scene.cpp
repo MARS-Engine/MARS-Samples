@@ -5,7 +5,7 @@
 #include <MARS/graphics/light_manager.hpp>
 #include <MPE/rigid_body.hpp>
 #include <MPE/colliders/AABB.hpp>
-#include "../components/camera_controller.hpp"
+#include "../components/camera/camera_controller.hpp"
 
 using namespace mars_engine;
 using namespace mars_3d;
@@ -54,7 +54,7 @@ void test_scene::load() {
     renderer->set_mesh_path("engine/assets/mesh/monkey.obj");
     renderer->set_material("engine/assets/materials/mesh.mat");
 
-    std::shared_ptr<mars_loader::wavefront_mesh> mesh;
+    mars_ref<mars_loader::wavefront_mesh> mesh;
 
     m_engine->resources()->load_resource("engine/assets/mesh/monkey.obj", mesh);
     obj->add_component<mpe::AABB>()->load_from_mesh(mesh);

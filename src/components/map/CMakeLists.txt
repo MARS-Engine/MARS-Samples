@@ -1,0 +1,1 @@
+target_sources(MMine PUBLIC map_loader.cpp)

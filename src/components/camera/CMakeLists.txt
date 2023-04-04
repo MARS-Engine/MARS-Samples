@@ -1,0 +1,1 @@
+target_sources(MMine PUBLIC camera_controller.cpp)
