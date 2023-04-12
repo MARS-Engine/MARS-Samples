@@ -44,12 +44,12 @@ int main() {
     auto update_worker = engine->create_worker(std::thread::hardware_concurrency() / 2);
     auto render_worker = engine->create_worker(std::thread::hardware_concurrency() / 2);
 
-    engine->add_layer<load_layer>(load_layer_validator, load_layer_callback, true);
-    engine->add_layer<update_layer>(update_layer_validator, update_layer_callback);
-    engine->add_layer<post_update_layer>(post_update_layer_validator, post_update_layer_callback);
-    engine->add_layer<post_render_layer>(post_render_layer_validator, post_render_layer_callback);
-    engine->add_layer<update_gpu>(update_gpu_validator, update_gpu_callback);
-    engine->add_layer<mpe::mpe_layer>(mpe::mpe_update_layer_validator, mpe::mpe_update_layer_callback);
+    engine->add_layer<load_layer>(load_layer_callback, true);
+    engine->add_layer<update_layer>(update_layer_callback);
+    engine->add_layer<post_update_layer>(post_update_layer_callback);
+    engine->add_layer<post_render_layer>(post_render_layer_callback);
+    engine->add_layer<update_gpu>(update_gpu_callback);
+    engine->add_layer<mpe::mpe_layer>(mpe::mpe_update_layer_callback);
 
     auto v_graphics = vulkan_backend(true);
     v_graphics.set_resources(mars_ref<mars_resources::resource_manager>(resources));
