@@ -36,37 +36,35 @@ public:
 };
 
 int main() {
-    mars_resources::resource_manager resources = mars_resources::create_resource_manager();
+    auto resources = std::make_shared<mars_resources::resource_manager>();
 
-    object_engine engine = create_engine();
-    engine->set_resources(resources);
+    auto engine = std::make_shared<object_engine>(2);
+    engine->set_resources(mars_ref<mars_resources::resource_manager>(resources));
 
     auto update_worker = engine->create_worker(std::thread::hardware_concurrency() / 2);
     auto render_worker = engine->create_worker(std::thread::hardware_concurrency() / 2);
 
-    engine->add_layer<load_layer>(load_layer_callback);
-    engine->add_layer<update_layer>(update_layer_callback);
-    engine->add_layer<post_update_layer>(post_update_layer_callback);
-    engine->add_layer<post_render_layer>(post_render_layer_callback);
-    engine->add_layer<update_gpu>(update_gpu_callback);
-    engine->add_layer<mpe::mpe_layer>(mpe::mpe_update_layer_callback);
+    engine->add_layer<load_layer>(load_layer_validator, load_layer_callback, true);
+    engine->add_layer<update_layer>(update_layer_validator, update_layer_callback);
+    engine->add_layer<post_update_layer>(post_update_layer_validator, post_update_layer_callback);
+    engine->add_layer<post_render_layer>(post_render_layer_validator, post_render_layer_callback);
+    engine->add_layer<update_gpu>(update_gpu_validator, update_gpu_callback);
+    engine->add_layer<mpe::mpe_layer>(mpe::mpe_update_layer_validator, mpe::mpe_update_layer_callback);
 
     auto v_graphics = vulkan_backend(true);
-    v_graphics.set_resources(resources);
+    v_graphics.set_resources(mars_ref<mars_resources::resource_manager>(resources));
 
-    auto graphics = create_graphics_engine(&v_graphics, 1);
-    v_graphics.set_graphics(graphics);
+    auto graphics = std::make_shared<graphics_engine>(&v_graphics, 1);
+    v_graphics.set_graphics(mars_ref<graphics_engine>(graphics));
     graphics->create_with_window("MARS", vector2<size_t>(1920, 1080), "deferred.mr");
 
-    auto new_scene = test_scene(graphics, engine);
+    auto new_scene = test_scene(mars_ref<graphics_engine>(graphics), mars_ref<object_engine>(engine));
 
     scene_manager::add_scene("test", &new_scene);
 
     scene_manager::load_scene("test");
 
     engine->spawn_wait_list();
-
-    update_worker->process_layer<load_layer>().wait();
 
     //update tick rate must be way higher than refresh rate, or it feels like it feels like its lagging
     tick_rate update_tick(480);
@@ -85,6 +83,7 @@ int main() {
             render_worker->process_layer<post_render_layer>().wait();
             graphics->swap();
             render_time.end();
+            engine->spawn_wait_room();
         }
     });
 
@@ -96,6 +95,7 @@ int main() {
 
         if (update_tick.tick_ready()) {
             update_time.start();
+            update_worker->process_layer<load_layer>().wait();
             graphics->update();
             update_worker->process_layer<mpe::mpe_layer>().wait();
             update_worker->process_layer<update_layer>().wait();
@@ -103,15 +103,16 @@ int main() {
             graphics->finish_update();
             update_tick.reset();
             update_time.end();
+            engine->spawn_wait_room();
         }
     }
+
+    thread.join();
 
     update_worker->close();
     render_worker->close();
     update_worker->join();
     render_worker->join();
-
-    thread.join();
 
     resources->clean();
     engine->clean();

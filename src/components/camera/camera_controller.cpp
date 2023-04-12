@@ -2,7 +2,7 @@
 
 mars_math::vector2<float> angle = { 0, 0 };
 
-void camera_controller::update(mars_engine::tick& _tick) {
+void camera_controller::update(const mars_engine::tick& _tick) {
     float speed = 5;
     float look_speed = 30;
     mars_math::vector3<float> movement = { 0, 0, 0 };

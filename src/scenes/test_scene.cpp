@@ -6,6 +6,7 @@
 #include <MPE/rigid_body.hpp>
 #include <MPE/colliders/AABB.hpp>
 #include "../components/camera/camera_controller.hpp"
+#include "../components/map/map_loader.hpp"
 
 using namespace mars_engine;
 using namespace mars_3d;
@@ -38,13 +39,13 @@ void test_scene::load() {
     m_graphics->backend()->lights()->add_light(n_light_2);
 
     //others
-    mars_object obj = create_object(m_engine);
+    auto obj = m_engine->create_obj();
     obj->add_component<mars_component::camera_updater>();
     obj->add_component<camera_controller>();
 
     m_engine->spawn(obj, m_graphics);
 
-    obj = create_object(m_engine);
+    obj = m_engine->create_obj();
 
     obj->transform().set_position({ -2, 20, 2});
     obj->add_component<mpe::rigid_body>();
@@ -61,15 +62,12 @@ void test_scene::load() {
 
     m_engine->spawn(obj, m_graphics);
 
-    auto ground = create_object(m_engine);
+    auto ground = m_engine->create_obj();
 
     ground->transform().set_position({ 0, -2, 0});
     ground->transform().set_scale({ 10, 0.5, 10});
 
-    renderer = ground->add_component<mesh_renderer>();
-
-    renderer->set_mesh_path("engine/assets/mesh/cube.obj");
-    renderer->set_material("engine/assets/materials/uv_mesh.mat");
+    auto map = ground->add_component<map_loader>();
 
     m_engine->resources()->load_resource("engine/assets/mesh/cube.obj", mesh);
     ground->add_component<mpe::AABB>()->load_from_mesh(mesh);
@@ -106,10 +104,10 @@ void test_scene::load() {
 
     //m_engine->instance(cube, m_instance, nullptr);
 
-    //for (auto x = 0; x < 5; x++) {
-    //    for (auto y = 0; y < 5; y++) {
-    //        for (auto z = 0; z < 5; z++) {
-    //            ground = new engine_object();
+    //for (auto x = 0; x < 20; x++) {
+    //    for (auto y = 0; y < 20; y++) {
+    //        for (auto z = 0; z < 20; z++) {
+    //            ground = m_engine->create_obj();
 //
     //            ground->transform().set_position({ (float)x, (float)y, (float)z});
     //            ground->transform().set_scale({ 0.5f, 0.5f, 0.5f});
@@ -119,7 +117,7 @@ void test_scene::load() {
     //            renderer->set_mesh_path("engine/assets/mesh/cube.obj");
     //            renderer->set_material("engine/assets/materials/uv_mesh.mat");
 //
-    //            m_engine->instance(ground, m_instance, nullptr);
+    //            m_engine->spawn(ground, m_graphics);
     //        }
     //    }
     //}
