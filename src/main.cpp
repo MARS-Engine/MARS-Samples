@@ -31,7 +31,7 @@ public:
     }
 
     void print(const std::string& _prefix) {
-        printf("%s%f\n", _prefix.c_str(), std::chrono::duration<float, std::chrono::seconds::period>(m_end - m_start).count());
+        printf("%s%f\n", _prefix.c_str(), std::chrono::duration<float, std::chrono::milliseconds::period>(m_end - m_start).count());
     }
 };
 
@@ -57,6 +57,8 @@ int main() {
     auto graphics = std::make_shared<graphics_engine>(&v_graphics, 1);
     v_graphics.set_graphics(mars_ref<graphics_engine>(graphics));
     graphics->create_with_window("MARS", vector2<size_t>(1920, 1080), "deferred.mr");
+
+    engine->set_graphics(mars_ref<graphics_engine>(graphics));
 
     auto new_scene = test_scene(mars_ref<graphics_engine>(graphics), mars_ref<object_engine>(engine));
 
@@ -102,8 +104,9 @@ int main() {
             update_worker->process_layer<post_update_layer>().wait();
             graphics->finish_update();
             update_tick.reset();
-            update_time.end();
             engine->spawn_wait_room();
+            update_time.end();
+            update_time.print("UPDATE TIME - ");
         }
     }
 

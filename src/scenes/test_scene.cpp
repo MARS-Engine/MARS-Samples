@@ -67,12 +67,21 @@ void test_scene::load() {
     ground->transform().set_position({ 0, -2, 0});
     ground->transform().set_scale({ 10, 0.5, 10});
 
-    auto map = ground->add_component<map_loader>();
+    renderer = ground->add_component<mesh_renderer>();
+
+    renderer->set_mesh_path("engine/assets/mesh/cube.obj");
+    renderer->set_material("engine/assets/materials/uv_mesh.mat");
 
     m_engine->resources()->load_resource("engine/assets/mesh/cube.obj", mesh);
     ground->add_component<mpe::AABB>()->load_from_mesh(mesh);
 
     m_engine->spawn(ground, m_graphics);
+
+    //for (size_t i = 0; i < 200'000; i++) {
+    //    auto obj2 = m_engine->create_obj();
+    //    obj2->add_component<map_loader>();
+    //    m_engine->spawn(obj2, m_graphics);
+    //}
 
     //auto cube = new engine_object();
 //
