@@ -10,6 +10,7 @@
 #include <MARS/engine/tick.hpp>
 #include <MARS/input/input_manager.hpp>
 #include <MPE/engine_layer.hpp>
+#include <fenv.h>
 
 using namespace mars_graphics;
 using namespace mars_math;
@@ -36,6 +37,9 @@ public:
 };
 
 int main() {
+    //debug float point errors
+    feenableexcept(FE_ALL_EXCEPT & ~FE_INEXACT);
+
     auto resources = std::make_shared<mars_resources::resource_manager>();
 
     auto engine = std::make_shared<object_engine>(2);
