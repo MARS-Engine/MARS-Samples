@@ -7,11 +7,14 @@
 #include <MPE/colliders/AABB.hpp>
 #include "../components/camera/camera_controller.hpp"
 #include "../components/map/map_loader.hpp"
+#include <MFR/font_renderer.hpp>
 
 using namespace mars_engine;
 using namespace mars_3d;
 void test_scene::load() {
 
+    auto font_renderer = m_engine->get_or_create_singleton<MFR::font_renderer>();
+    font_renderer->load_font("/usr/share/fonts/noto/NotoSansMono-Regular.ttf");
     //Lights
 
     float constant  = 1.0;
@@ -35,8 +38,8 @@ void test_scene::load() {
         .Radius = (-linear +  (float)std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0 / 5.0) * lightMax))) / (2 * quadratic)
     });
 
-    m_graphics->backend()->lights()->add_light(n_light);
-    m_graphics->backend()->lights()->add_light(n_light_2);
+    m_graphics->backend().lock()->lights()->add_light(n_light);
+    m_graphics->backend().lock()->lights()->add_light(n_light_2);
 
     //others
     auto obj = m_engine->create_obj();

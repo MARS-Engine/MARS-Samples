@@ -55,11 +55,11 @@ int main() {
     engine->add_layer<update_gpu>(update_gpu_callback);
     engine->add_layer<mpe::mpe_layer>(mpe::mpe_update_layer_callback);
 
-    auto v_graphics = vulkan_backend(true);
-    v_graphics.set_resources(mars_ref<mars_resources::resource_manager>(resources));
+    auto v_graphics = std::make_shared<vulkan_backend>(true);
+    v_graphics->set_resources(mars_ref<mars_resources::resource_manager>(resources));
 
-    auto graphics = std::make_shared<graphics_engine>(&v_graphics, 1);
-    v_graphics.set_graphics(mars_ref<graphics_engine>(graphics));
+    auto graphics = std::make_shared<graphics_engine>(v_graphics, 1);
+    v_graphics->set_graphics(mars_ref<graphics_engine>(graphics));
     graphics->create_with_window("MARS", vector2<size_t>(1920, 1080), "deferred.mr");
 
     engine->set_graphics(mars_ref<graphics_engine>(graphics));
