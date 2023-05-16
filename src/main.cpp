@@ -38,7 +38,7 @@ public:
 
 int main() {
     //debug float point errors
-    feenableexcept(FE_ALL_EXCEPT & ~FE_INEXACT);
+    //feenableexcept(FE_ALL_EXCEPT & ~FE_INEXACT);
 
     auto resources = std::make_shared<mars_resources::resource_manager>();
 
@@ -60,7 +60,7 @@ int main() {
 
     auto graphics = std::make_shared<graphics_engine>(v_graphics, 1);
     v_graphics->set_graphics(mars_ref<graphics_engine>(graphics));
-    graphics->create_with_window("MARS", vector2<size_t>(1920, 1080), "deferred.mr");
+    graphics->create_with_window("MARS", vector2<int>(1920, 1080), "deferred.mr");
 
     engine->set_graphics(mars_ref<graphics_engine>(graphics));
 
