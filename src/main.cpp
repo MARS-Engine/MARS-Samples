@@ -59,6 +59,7 @@ int main() {
     v_graphics->set_resources(mars_ref<mars_resources::resource_manager>(resources));
 
     auto graphics = std::make_shared<graphics_engine>(v_graphics, 1);
+    graphics->set_engine(engine);
     v_graphics->set_graphics(mars_ref<graphics_engine>(graphics));
     graphics->create_with_window("MARS", vector2<int>(1920, 1080), "deferred.mr");
 
@@ -124,7 +125,6 @@ int main() {
     resources->clean();
     engine->clean();
     pipeline_manager::destroy();
-    mars_input::input_manager::clean();
     graphics->destroy();
 
     return 0;

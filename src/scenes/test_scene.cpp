@@ -13,7 +13,7 @@ using namespace mars_engine;
 using namespace mars_3d;
 void test_scene::load() {
 
-    auto font_renderer = m_engine->get_or_create_singleton<MFR::font_renderer>();
+    auto font_renderer = m_engine->get_singleton<MFR::font_renderer>();
     font_renderer->load_font("/usr/share/fonts/noto/NotoSansMono-Regular.ttf");
     //Lights
 
