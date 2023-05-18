@@ -13,7 +13,7 @@ using namespace mars_engine;
 using namespace mars_3d;
 void test_scene::load() {
 
-    auto font_renderer = m_engine->get_singleton<MFR::font_renderer>();
+    auto font_renderer = m_engine->get<MFR::font_renderer>();
     font_renderer->load_font("/usr/share/fonts/noto/NotoSansMono-Regular.ttf");
     //Lights
 
@@ -60,7 +60,7 @@ void test_scene::load() {
 
     mars_ref<mars_loader::wavefront_mesh> mesh;
 
-    m_engine->resources()->load_resource("engine/assets/mesh/monkey.obj", mesh);
+    m_engine->get<mars_resources::resource_manager>()->load_resource("engine/assets/mesh/monkey.obj", mesh);
     obj->add_component<mpe::AABB>()->load_from_mesh(mesh);
 
     m_engine->spawn(obj, m_graphics);
@@ -75,12 +75,12 @@ void test_scene::load() {
     renderer->set_mesh_path("engine/assets/mesh/cube.obj");
     renderer->set_material("engine/assets/materials/uv_mesh.mat");
 
-    m_engine->resources()->load_resource("engine/assets/mesh/cube.obj", mesh);
+    m_engine->get<mars_resources::resource_manager>()->load_resource("engine/assets/mesh/cube.obj", mesh);
     ground->add_component<mpe::AABB>()->load_from_mesh(mesh);
 
     m_engine->spawn(ground, m_graphics);
 
-    //for (size_t i = 0; i < 300'000; i++) {
+    //for (size_t i = 0; i < 350'000; i++) {
     //    auto obj2 = m_engine->create_obj();
     //    obj2->add_component<map_loader>();
     //    m_engine->spawn(obj2, m_graphics);

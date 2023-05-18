@@ -7,7 +7,7 @@ void camera_controller::update(const mars_engine::tick& _tick) {
     float look_speed = 30;
     mars_math::vector3<float> movement = { 0, 0, 0 };
 
-    auto input = engine()->get_singleton<mars_input::input>();
+    auto input = engine()->get<mars_input::input>();
 
     if (input->get_key("A"))
         movement.x = -speed;

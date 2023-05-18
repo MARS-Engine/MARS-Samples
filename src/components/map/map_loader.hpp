@@ -6,7 +6,7 @@
 #include <MARS/loaders/wavefront_loader.hpp>
 #include <MARS/resources/ram_texture.hpp>
 
-class map_loader : public mars_engine::component, public mars_layers::update_layer, public mars_layers::post_update_layer {
+class map_loader : public mars_engine::component, public mars_layers::update_layer {
 private:
     std::string m_map;
     mars_ref<mars_resources::ram_texture> m_heightmap;
@@ -18,7 +18,6 @@ public:
     }
 
     void update(const mars_engine::tick& _tick) override;
-    void post_update() override;
 };
 
 #endif

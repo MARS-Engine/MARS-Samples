@@ -40,10 +40,7 @@ int main() {
     //debug float point errors
     //feenableexcept(FE_ALL_EXCEPT & ~FE_INEXACT);
 
-    auto resources = std::make_shared<mars_resources::resource_manager>();
-
     auto engine = std::make_shared<object_engine>(2);
-    engine->set_resources(mars_ref<mars_resources::resource_manager>(resources));
 
     auto update_worker = engine->create_worker(std::thread::hardware_concurrency() / 2);
     auto render_worker = engine->create_worker(std::thread::hardware_concurrency() / 2);
@@ -56,7 +53,7 @@ int main() {
     engine->add_layer<mpe::mpe_layer>(mpe::mpe_update_layer_callback);
 
     auto v_graphics = std::make_shared<vulkan_backend>(true);
-    v_graphics->set_resources(mars_ref<mars_resources::resource_manager>(resources));
+    v_graphics->set_resources(mars_ref<mars_resources::resource_manager>(engine->get<mars_resources::resource_manager>()));
 
     auto graphics = std::make_shared<graphics_engine>(v_graphics, 1);
     graphics->set_engine(engine);
@@ -95,12 +92,12 @@ int main() {
     });
 
     while (graphics->is_running()) {
-        if (input_tick.tick_ready()) {
+       // if (input_tick.tick_ready()) {
             graphics->window_update();
             input_tick.reset();
-        }
+        //}
 
-        if (update_tick.tick_ready()) {
+        //if (update_tick.tick_ready()) {
             update_time.start();
             update_worker->process_layer<load_layer>().wait();
             graphics->update();
@@ -112,7 +109,7 @@ int main() {
             engine->spawn_wait_room();
             update_time.end();
             update_time.print("UPDATE TIME - ");
-        }
+        //}
     }
 
     thread.join();
@@ -122,7 +119,8 @@ int main() {
     update_worker->join();
     render_worker->join();
 
-    resources->clean();
+    engine->get<mars_resources::resource_manager>()->clean();
+
     engine->clean();
     pipeline_manager::destroy();
     graphics->destroy();
