@@ -7,3 +7,6 @@
 [submodule "MPE"]
 	path = MPE
 	url = https://github.com/MARS-Engine/MPE.git
+[submodule "MFR"]
+	path = MFR
+	url = https://github.com/MARS-Engine/MFR.git
