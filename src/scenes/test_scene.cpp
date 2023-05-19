@@ -80,7 +80,7 @@ void test_scene::load() {
 
     m_engine->spawn(ground, m_graphics);
 
-    //for (size_t i = 0; i < 350'000; i++) {
+    //for (size_t i = 0; i < 5'000'000; i++) {
     //    auto obj2 = m_engine->create_obj();
     //    obj2->add_component<map_loader>();
     //    m_engine->spawn(obj2, m_graphics);
