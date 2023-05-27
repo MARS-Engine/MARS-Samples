@@ -22,24 +22,22 @@ void test_scene::load() {
     float quadratic = 1.8;
     float lightMax  = std::fmaxf(std::fmaxf(1.0f, 0.0f), 0.0f);
 
-    auto n_light = new mars_graphics::point_light({
-        .Position = { 2, 1, 2 },
-        .Color = { 1.0f, 0.0f, 0.0f },
-        .Linear = 0.7f,
-        .Quadratic = 1.8f,
-        .Radius = (-linear +  (float)std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0 / 5.0) * lightMax))) / (2 * quadratic)
-    });
+    auto n_light = std::make_shared<mars_graphics::point_light>();
+    n_light->Position = { 2, 1, 2 };
+    n_light->Color = { 1.0f, 0.0f, 0.0f };
+    n_light->Linear = 0.7f;
+    n_light->Quadratic = 1.8f;
+    n_light->Radius = (-linear +  (float)std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0 / 5.0) * lightMax))) / (2 * quadratic);
 
-    auto n_light_2 = new mars_graphics::point_light({
-        .Position = { 2, 1, 1 },
-        .Color = { 0.0f, 1.0f, 0.0f },
-        .Linear = 0.7f,
-        .Quadratic = 1.8f,
-        .Radius = (-linear +  (float)std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0 / 5.0) * lightMax))) / (2 * quadratic)
-    });
+    auto n_light_2 = std::make_shared<mars_graphics::point_light>();
+    n_light_2->Position = { 2, 1, 1 };
+    n_light_2->Color = { 0.0f, 1.0f, 0.0f };
+    n_light_2->Linear = 0.7f;
+    n_light_2->Quadratic = 1.8f;
+    n_light_2->Radius = (-linear +  (float)std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0 / 5.0) * lightMax))) / (2 * quadratic);
 
-    m_graphics->backend().lock()->lights()->add_light(n_light);
-    m_graphics->backend().lock()->lights()->add_light(n_light_2);
+    m_graphics->backend()->lights()->add_light(n_light);
+    m_graphics->backend()->lights()->add_light(n_light_2);
 
     //others
     auto obj = m_engine->create_obj();

@@ -6,12 +6,8 @@
 #include <MARS/scenes/scene_manager.hpp>
 #include <MARS/engine/layers/main_layers.hpp>
 #include <MARS/engine/engine_worker.hpp>
-#include <MARS/graphics/pipeline_manager.hpp>
-#include <MARS/engine/tick.hpp>
 #include <MARS/input/input_manager.hpp>
 #include <MPE/engine_layer.hpp>
-#include "./components/map/map_loader.hpp"
-#include <fenv.h>
 
 using namespace mars_graphics;
 using namespace mars_math;
@@ -65,67 +61,64 @@ int main() {
 
     auto new_scene = test_scene(mars_ref<graphics_engine>(graphics), mars_ref<object_engine>(engine));
 
-    scene_manager::add_scene("test", &new_scene);
+    auto s_manager = engine->get<scene_manager>();
 
-    scene_manager::load_scene("test");
+    s_manager->add_scene("test", &new_scene);
+
+    s_manager->load_scene("test");
 
     engine->spawn_wait_list();
-
-    //update tick rate must be way higher than refresh rate, or it feels like it feels like its lagging
-    tick_rate update_tick(480);
-    tick_rate input_tick(240);
 
     time_calc update_time;
     time_calc render_time;
 
-    render_worker->add_function([&]() {
-        render_time.start();
-        graphics->prepare_render();
-        graphics->draw();
-    });
-    render_worker->add_layer<update_gpu>();
-    render_worker->add_function([&]() {
-        graphics->wait_draw();
-    });
-    render_worker->add_layer<post_render_layer>();
-    render_worker->add_function([&]() {
-        graphics->swap();
-        render_time.end();
-        engine->spawn_wait_room();
-    });
+    render_worker->
+        add_function([&]() {
+            render_time.start();
+            graphics->prepare_render();
+            graphics->draw();
+        })
+        .add_layer<update_gpu>()
+        .add_function([&]() {
+            graphics->wait_draw();
+        })
+        .add_layer<post_render_layer>()
+        .add_function([&]() {
+            graphics->swap();
+            render_time.end();
+            engine->spawn_wait_room();
+        });
 
     update_worker->add_function([&]() {
-        graphics->window_update();
-        input_tick.reset();
-        update_time.start();
-    });
-    update_worker->add_layer<load_layer>();
-    update_worker->add_function([&]() {
-        graphics->update();
-    });
-    update_worker->add_layer<mpe::mpe_layer>();
-    update_worker->add_layer<update_layer>();
-    update_worker->add_layer<post_update_layer>();
-    update_worker->add_function([&]() {
-        graphics->finish_update();
-        update_tick.reset();
-        engine->spawn_wait_room();
-        update_time.end();
-        printf("%f\n", engine->get_layer(typeid(update_layer))->m_tick.delta_ms());
-    });
+            graphics->window_update();
+            update_time.start();
+        })
+        .add_layer<load_layer>()
+        .add_function([&]() {
+            graphics->update();
+        })
+        .add_layer<mpe::mpe_layer>()
+        .add_layer<update_layer>()
+        .add_layer<post_update_layer>()
+        .add_function([&]() {
+            graphics->finish_update();
+            engine->spawn_wait_room();
+            update_time.end();
+            printf("%f\n", engine->get_layer(typeid(update_layer))->m_tick.delta_ms());
+        });
 
     update_worker->run();
     render_worker->run();
 
     graphics->is_running()->wait(false);
+    graphics->wait_draw();
 
-    update_worker->close().join();
-    render_worker->close().join();
+    update_worker->close();
+    render_worker->close();
 
     engine->get<mars_resources::resource_manager>()->clean();
 
     engine->clean();
-    pipeline_manager::destroy();
     graphics->destroy();
 
     return 0;

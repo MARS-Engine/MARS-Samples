@@ -18,8 +18,8 @@ void camera_controller::update(const mars_engine::tick& _tick) {
     if (input->get_key("W"))
         movement.z = speed;
 
-    angle.x = angle.x + input->mouse_relative().y * look_speed * _tick.delta();
-    angle.y = angle.y + input->mouse_relative().x * look_speed * _tick.delta();
+    angle.x = angle.x + input->mouse_relative().y * _tick.delta() * look_speed;
+    angle.y = angle.y + input->mouse_relative().x * _tick.delta() * look_speed;
 
     if (angle.x > 89)
         angle.x = 89;
